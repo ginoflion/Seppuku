@@ -1,0 +1,4 @@
+repository "Projeto_Aplicado@gigassalo@cloud"
+  path "/"
+    br "/main"
+    co "/main"

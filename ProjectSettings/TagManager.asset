@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Checkpoint
+  - Enemy
+  - Projectile
+  - Boss
+  - Parry
+  - OneWayPlatform
+  - Target
+  - Boss_2
+  - Ground
+  - Boss_3
+  - Weakspot
+  - Armor
+  - building
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Ground
+  - Water
+  - UI
+  - Attackble
+  - Projectile
+  - Camera
+  - Wall
+  - Boss
+  - Player
+  - Parry
+  - OneWayPlatform
+  - Props
+  - Traps
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Parallax
+    uniqueID: 3189618771
+    locked: 0
+  - name: Ground
+    uniqueID: 1874714875
+    locked: 0
+  - name: Props
+    uniqueID: 1780162267
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Traps
+    uniqueID: 904374007
+    locked: 0
+  - name: Player
+    uniqueID: 918040349
+    locked: 0
+  - name: UI
+    uniqueID: 950520921
+    locked: 0
