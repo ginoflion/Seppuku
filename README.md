@@ -21,7 +21,7 @@ João Sousa - a25613
 
 ## Análise das IAs
 
-### State Machine:
+## State Machine:
 
 Uma State Machine é um modelo matemático utilizado para representar os diversos comportamentos e as respetivas transições entre estes em um programa.
 Ou seja, é composta por estados e transições. Nela cada estado representa o sistema em um determinado momento no tempo e
@@ -300,7 +300,7 @@ private IEnumerator AutoAttack()
 ```
 
 ---
-### Decision Scoring
+## Decision Scoring
 
 O Decision Scoring é uma técnica que utiliza modelos matemáticos e algoritmos de inteligência artificial para avaliar e atribuir pontuações a diferentes opções ou cenários de decisão. 
 Ou seja, é um sistema que analisa dados de forma estruturada, com o objetivo de ajudar a tomar decisões de maneira mais informada e eficiente.
