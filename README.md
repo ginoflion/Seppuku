@@ -27,7 +27,7 @@ Uma State Machine é um modelo matemático utilizado para representar os diverso
 Ou seja, é composta por estados e transições. Nela cada estado representa o sistema em um determinado momento no tempo e
 não é possível uma máquina de estados estar em dois estados ao mesmo tempo.
 
-#### Implementação da State Machine
+### Implementação da State Machine
 
 A State Machine é implementada no primeiro Boss do jogo. Ela é utilizada para gerir o comportamento do primeiro boss do jogo. 
 A State Machine presente no nosso jogo é composta pelos seguintes estados:
@@ -35,14 +35,15 @@ A State Machine presente no nosso jogo é composta pelos seguintes estados:
 1. Idle
 2. Run
 3. Attack
-4. Parry
-5. Dead
+4. Dead
 
+O Boss é ativado usando o GameManager, e enquanto que não se encontra ativo, o seu estado é o Idle. 
+Quando o player finaliza a leitura do diálogo entre os dois, a boss fight começa, com a ativação do Boss. 
+Assim sendo, o seu estado é automaticamente alterado para o Run, visto que se encontra fora do attack range do boss. O RunState é responsável por 
+Quando o mesmo se aproxima do player, como a distância é menos que o seu attack range, ele atualiza o seu estado para o attack state que funciona em sincronia com o script Boss Attack. 
+Os estados vão alterando entre si, até o player concluir a boss fight. 
 
 ```cs
-using UnityEngine;
-using System.Collections;
-
 public class Boss : MonoBehaviour
 {
     public enum BossState
@@ -50,57 +51,25 @@ public class Boss : MonoBehaviour
         Idle,
         Run,
         Attack,
-        Parry,
         Dead
-    }
-
-    [Header("Boss Settings")]
-    public BossState currentState = BossState.Idle;
-    public float speed = 5f;
-    public float attackRange = 3f;
-    public bool isFlipped = false;
-    public bool isActive = false;
-
-    [Header("References")]
-    public Transform player;
-    private Rigidbody2D rb;
-    private Animator animator;
-
-    private Vector2 startPosition;
-
-    private void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-
-        // Store the initial position of the boss as a Vector2
-        startPosition = transform.position;
-
-        if (player == null)
-        {
-            player = GameObject.FindGameObjectWithTag("Player").transform;
-        }
     }
 
     private void Update()
     {
-        // Return if the boss is not active
         if (!isActive)
         {
-            ChangeState(BossState.Idle); // Ensure Idle when inactive
+            ChangeState(BossState.Idle);
             return;
         }
 
         BossHealth bossHealth = GetComponent<BossHealth>();
 
-        // Ensure Idle when the boss is vulnerable
         if (bossHealth != null && !bossHealth.isInvulnerable)
         {
             ChangeState(BossState.Idle);
             return;
         }
 
-        // Handle state behavior
         switch (currentState)
         {
             case BossState.Idle:
@@ -112,9 +81,6 @@ public class Boss : MonoBehaviour
             case BossState.Attack:
                 AttackState();
                 break;
-            case BossState.Parry:
-                ParryState();
-                break;
             case BossState.Dead:
                 DeadState();
                 break;
@@ -123,10 +89,7 @@ public class Boss : MonoBehaviour
 
     private void IdleState()
     {
-        // Ensure the boss stays still
         rb.velocity = Vector2.zero;
-
-        // Play Idle animation
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Boss_Idle") == false)
         {
             animator.Play("Boss_Idle");
@@ -142,8 +105,6 @@ public class Boss : MonoBehaviour
         if (currentState == newState) return;
 
         currentState = newState;
-
-        // Update Animator parameter
         animator.SetBool("isIdle", newState == BossState.Idle);
 
         Debug.Log($"Boss state changed to: {currentState}");
@@ -166,11 +127,6 @@ public class Boss : MonoBehaviour
 
             case BossState.Attack:
                 break;
-
-            case BossState.Parry:
-                animator.Play("Rei_Parry");
-                break;
-
             case BossState.Dead:
                 animator.Play("Boss_Death");
                 break;
@@ -186,30 +142,6 @@ public class Boss : MonoBehaviour
         transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
     }
 
-    public void LookAtPlayer()
-    {
-        if (player == null || currentState == BossState.Dead) return;
-
-        Vector3 flipped = transform.localScale;
-        flipped.z *= -1f;
-
-        if (transform.position.x > player.position.x && isFlipped)
-        {
-            transform.localScale = flipped;
-            transform.Rotate(0f, 180f, 0f);
-            isFlipped = false;
-        }
-        else if (transform.position.x < player.position.x && !isFlipped)
-        {
-            transform.localScale = flipped;
-            transform.Rotate(0f, 180f, 0f);
-            isFlipped = true;
-        }
-    }
-
-
-   
-
     private void RunState()
     {
         if (player == null || currentState == BossState.Dead) return;
@@ -217,18 +149,15 @@ public class Boss : MonoBehaviour
         float direction = player.position.x - transform.position.x;
         direction = Mathf.Sign(direction);
         BossHealth bossHealth = GetComponent<BossHealth>();
-        // If the boss is vulnerable, it stops but doesn't switch states immediately
         if (bossHealth != null && !bossHealth.isInvulnerable)
         {
             Debug.Log("Boss is vulnerable and slowing down.");
             rb.velocity = Vector2.zero;
-            return; // Pause movement but don't switch to Idle
+            return; 
         }
 
-        // Chase the player
         rb.velocity = new Vector2(direction * speed, rb.velocity.y);
 
-        // If in attack range, stop and switch to Attack
         if (Vector2.Distance(player.position, transform.position) <= attackRange)
         {
             rb.velocity = Vector2.zero;
@@ -252,29 +181,18 @@ public class Boss : MonoBehaviour
             return;
         }
 
-        // Check the distance to the player
         float distanceToPlayer = Vector2.Distance(player.position, transform.position);
 
-        // If the player is out of attack range, transition to Run state
         if (distanceToPlayer > attackRange)
         {
             Debug.Log("Player is too far. Switching to Run state.");
-            animator.SetBool("isFarAway", true); // Set the condition for the animator
+            animator.SetBool("isFarAway", true); 
             ChangeState(BossState.Run);
             return;
         }
 
-        // Keep looking at the player during the attack
         LookAtPlayer();
     }
-
-
-
-    private void ParryState()
-    {
-        Debug.Log("Boss is parrying");
-    }
-
     
 
     public void ActivateBoss()
@@ -285,7 +203,6 @@ public class Boss : MonoBehaviour
             return;
         }
 
-        // Check if the boss is currently vulnerable
         BossHealth bossHealth = GetComponent<BossHealth>();
         if (bossHealth != null && !bossHealth.isInvulnerable)
         {
@@ -297,37 +214,26 @@ public class Boss : MonoBehaviour
         isActive = true;
         ChangeState(BossState.Run);
     }
+
     public void ResetBoss()
     {
-        // Reset health
-        BossHealth bossHealth = GetComponent<BossHealth>();
-        if (bossHealth != null)
-        {
-            bossHealth.ResetHealth(); // Ensure this method sets health to max
-        }
-
-        // Teleport the boss to its starting position
-        transform.position = startPosition;
-
-        // Reset state to Idle
+        ....
         ChangeState(BossState.Idle);
-
-        // Reactivate the boss
-        isActive = true;
-        rb.velocity = Vector2.zero; // Optionally reset velocity
-        Debug.Log("Boss has been reset to initial state and teleported to starting position.");
+        .... 
     }
-
-
 }
 ```
-#### Boss Health
+
+---
+### Boss Health
+---
 
 Esta State Machine funciona em conjunto com os outros dois scripts que dão manage no Boss, o Boss_Health e o Boss_Attack.
 O Boss_Health é responsável pela vida do Boss e a sua vulnerabilidade.
 Neste caso quando o Boss fica vulneravel, o seu estado é mudado para o Idle, uma vez que ele fica stun locked. 
 Quando esse período acaba, o estado leva update para o Run, para o Boss continuar a trocar de estados sem o envolvimento deste script.
 Quando a vida do Boss é igual ou inferior a 0, o seu estado leva update para o Die e desativamos as suas físicas e mecânicas
+
 ```cs 
     private void MakeVulnerable()
     {
@@ -362,10 +268,14 @@ Quando a vida do Boss é igual ou inferior a 0, o seu estado leva update para o 
     }
 ```
 
-#### Boss Attack
+---
+### Boss Attack
+---
 
 O outro script que afeta a State Machine é o Boss Attack. Este script é responsável por gerir o ataque do boss e o cooldown entre eles. 
-Ao contrário do Boss_Health este script não altera o State do Boss, mas age quando está no atack state, devido ao range do ataque do boss e ao método de ataque automatico, ou seja, estando dentro do range, o boss ataca automaticamente
+Ao contrário do Boss_Health este script não altera o State do Boss, mas age quando está no atack state, devido ao range do ataque do boss e ao
+método de ataque automatico, ou seja, estando dentro do range, o boss ataca automaticamente.
+
 ```cs
 private IEnumerator AutoAttack()
     {
@@ -373,20 +283,18 @@ private IEnumerator AutoAttack()
         {
             if (bossHealth.isDead) yield break;
 
-            // Skip attacking if the boss is vulnerable or too far from the player
             if (!bossHealth.isInvulnerable || Vector2.Distance(bossTransform.position, playerTransform.position) > attackRange)
             {
                 yield return null;
                 continue;
             }
 
-            // If not already attacking, initiate an attack
             if (!isAttacking)
             {
                 Attack();
             }
 
-            yield return null; // Check conditions every frame
+            yield return null; 
         }
     }
 ```
