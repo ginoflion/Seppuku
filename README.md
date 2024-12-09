@@ -27,7 +27,7 @@ Uma State Machine é um modelo matemático utilizado para representar os diverso
 Ou seja, é composta por estados e transições. Nela cada estado representa o sistema em um determinado momento no tempo e
 não é possível uma máquina de estados estar em dois estados ao mesmo tempo.
 
-### Implementação da State Machine
+#### Implementação da State Machine
 
 A State Machine é implementada no primeiro Boss do jogo. Ela é utilizada para gerir o comportamento do primeiro boss do jogo. 
 A State Machine presente no nosso jogo é composta pelos seguintes estados:
@@ -321,6 +321,8 @@ public class Boss : MonoBehaviour
 
 }
 ```
+#### Boss Health
+
 Esta State Machine funciona em conjunto com os outros dois scripts que dão manage no Boss, o Boss_Health e o Boss_Attack.
 O Boss_Health é responsável pela vida do Boss e a sua vulnerabilidade.
 Neste caso quando o Boss fica vulneravel, o seu estado é mudado para o Idle, uma vez que ele fica stun locked. 
@@ -359,6 +361,9 @@ Quando a vida do Boss é igual ou inferior a 0, o seu estado leva update para o 
         ....
     }
 ```
+
+#### Boss Attack
+
 O outro script que afeta a State Machine é o Boss Attack. Este script é responsável por gerir o ataque do boss e o cooldown entre eles. 
 Ao contrário do Boss_Health este script não altera o State do Boss, mas age quando está no atack state, devido ao range do ataque do boss e ao método de ataque automatico, ou seja, estando dentro do range, o boss ataca automaticamente
 ```cs
@@ -385,5 +390,8 @@ private IEnumerator AutoAttack()
         }
     }
 ```
+
+---
+
 ***
 
