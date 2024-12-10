@@ -312,7 +312,7 @@ Essa pontuação serve como uma medida que facilita a comparação e priorizaç�
 O Decision Scoring é implementando na mecânica do 2º boss para decidir para onde o boss se deve teletransportar.
 
 Neste Decision Scoring ele usa 3 critérios:
-1. Distãncia do Boss ao Jogador
+1. Distãncia do ponto de teletransporte ao Jogador
 2. Linha de Visão
 3. Previsão da localização futura do Jogador
 
