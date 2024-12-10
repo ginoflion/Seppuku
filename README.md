@@ -19,7 +19,7 @@ Ricardo Almeida - a26344
 
 2. Decision Scoring 
 
-3. A* Pathfinding
+3. Pathfinding
 
 ---
 
@@ -514,7 +514,7 @@ Um peso é atribuido a cada critério , podendo ser ajustado para obter um compo
 Este IA é usado sempre que o Boss dá teletransporte para um novo ponto.
 
 ***
-AI do Sliding Tile Puzzle- Ricardo Salema de Almeida n26344
+AI do Sliding Tile Puzzle
 =============================================
 ![ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/f7e5c6be-62e8-476b-a45e-8d2d265abd7f)
 
